@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html ng-app>
+<html ng-app="bookMonkey">
 <head>
   <meta charset="utf-8">
-  <title>myApp</title>
+  <title>BookMonkey</title>
 
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="styles/main.css">
@@ -10,8 +10,7 @@
 <body>
   <div class="container">
 
-    <h1>Hello {{ name }}!</h1>
-    <input type="text" ng-model="name" />
+    <div ng-view></div>
 
   </div>
   <!-- 3rd-Party Libs -->
@@ -19,5 +18,9 @@
   <script src="bower_components/angular/angular.js"></script>
   <script src="bower_components/angular-route/angular-route.js"></script>
   <!-- Application Files -->
+  <script src="scripts/app.js"></script>
+  <script src="scripts/controllers/BookListCtrl.js"></script>
+
+  <script src="scripts/_configs/config.js"></script>
 </body>
 </html>
