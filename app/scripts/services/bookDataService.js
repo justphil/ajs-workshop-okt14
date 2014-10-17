@@ -1,4 +1,4 @@
-angular.module('bookMonkey').factory('bookDataService', function($q) {
+angular.module('bookMonkey').factory('bookDataService', function($q, dataEnhancer) {
 
   var books = [
     {
@@ -59,8 +59,14 @@ angular.module('bookMonkey').factory('bookDataService', function($q) {
 
   // Private Implementations
   function getBooks() {
+    var booksCopy = angular.copy(books);
+
+    booksCopy.forEach(function(b) {
+      dataEnhancer.enhance(b);
+    });
+
     return $q.when({
-      data: angular.copy(books)
+      data: booksCopy
     });
   }
 

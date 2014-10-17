@@ -5,10 +5,25 @@ describe('Service: bookDataService', function() {
 
   beforeEach(module('bookMonkey'));
 
+  beforeEach(module(function($provide) {
+    $provide.factory('dataEnhancer', function() {
+      function enhance(b) {
+        b.test = 'test';
+        return b;
+      }
+
+      return {
+        enhance: enhance
+      }
+    });
+  }));
+
   beforeEach(inject(function(_$rootScope_, _bookDataService_) {
     $rootScope = _$rootScope_;
     bookDataService = _bookDataService_;
   }));
+
+
 
   describe('Duck Typing', function() {
     it('should exist', function() {
@@ -29,7 +44,6 @@ describe('Service: bookDataService', function() {
 
       promise.then(function(response) {
         books = response.data;
-        console.log('#########');
       });
 
       // synchronously resolve the pending promise
@@ -40,6 +54,8 @@ describe('Service: bookDataService', function() {
         expect(book.title).toBeDefined();
         expect(book.subtitle).toBeDefined();
         expect(book.isbn).toBeDefined();
+        expect(book.test).toBeDefined();
+        expect(book.test).toBe('test');
       });
     });
 
