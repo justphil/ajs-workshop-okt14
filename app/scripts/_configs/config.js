@@ -7,6 +7,10 @@ $routeProvider
     templateUrl: 'templates/views/book_list.html',
     controller: 'BookListCtrl'
   })
+  .when('/books/:isbn', {
+    templateUrl: 'templates/views/book_details.html',
+    controller: 'BookDetailsCtrl'
+  })
   /* Default route */
   .otherwise({
     redirectTo: '/books'

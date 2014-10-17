@@ -1,4 +1,4 @@
-angular.module('bookMonkey').factory('bookDataService', function($q, $timeout) {
+angular.module('bookMonkey').factory('bookDataService', function($q) {
 
   var books = [
     {
@@ -64,9 +64,26 @@ angular.module('bookMonkey').factory('bookDataService', function($q, $timeout) {
     });
   }
 
+  function getBookByIsbn(isbn) {
+    var book;
+
+    var tmpArray = books.filter(function(book) {
+      return isbn === book.isbn;
+    });
+
+    if (tmpArray.length > 0) {
+      book = tmpArray[0];
+    }
+
+    return $q.when({
+      data: book
+    });
+  }
+
   // Revealing Module Pattern (Public API)
   return {
-    getBooks: getBooks
+    getBooks: getBooks,
+    getBookByIsbn: getBookByIsbn
   };
 
 });
