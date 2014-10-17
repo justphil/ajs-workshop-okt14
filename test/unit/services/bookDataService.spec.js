@@ -111,4 +111,34 @@ describe('Service: bookDataService', function() {
     });
   });
 
+  describe('deleteBookByIsbn()', function() {
+    it('should properly delete an available book object', function() {
+      var isbn = '978-3-89864-829-5';
+      var bookDeleted = false;
+      var book;
+
+      bookDataService.getBookByIsbn(isbn).then(function(response) {
+        book = response.data;
+      });
+      $rootScope.$apply();
+
+      expect(book).toBeDefined();
+
+
+      bookDataService.deleteBookByIsbn(isbn).then(function(response) {
+        bookDeleted = response.data;
+      });
+      $rootScope.$apply();
+
+      expect(bookDeleted).toBe(true);
+
+      bookDataService.getBookByIsbn(isbn).then(function(response) {
+        book = response.data;
+      });
+      $rootScope.$apply();
+
+      expect(book).toBeUndefined();
+    });
+  });
+
 });

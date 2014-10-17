@@ -93,11 +93,28 @@ angular.module('bookMonkey').factory('bookDataService', function($q, dataEnhance
     });
   }
 
+  function deleteBookByIsbn(isbn) {
+    var deleted = false;
+    var i = books.length;
+    while(i--) {
+      if (books[i].isbn === isbn) {
+        books.splice(i, 1);
+        deleted = true;
+        break;
+      }
+    }
+
+    return $q.when({
+      data: deleted
+    });
+  }
+
   // Revealing Module Pattern (Public API)
   return {
     getBooks: getBooks,
     getBookByIsbn: getBookByIsbn,
-    saveBook: saveBook
+    saveBook: saveBook,
+    deleteBookByIsbn: deleteBookByIsbn
   };
 
 });
