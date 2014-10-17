@@ -86,10 +86,18 @@ angular.module('bookMonkey').factory('bookDataService', function($q, dataEnhance
     });
   }
 
+  function saveBook(book) {
+    books.push(book);
+    return $q.when({
+      data: true
+    });
+  }
+
   // Revealing Module Pattern (Public API)
   return {
     getBooks: getBooks,
-    getBookByIsbn: getBookByIsbn
+    getBookByIsbn: getBookByIsbn,
+    saveBook: saveBook
   };
 
 });

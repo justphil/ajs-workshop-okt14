@@ -82,4 +82,33 @@ describe('Service: bookDataService', function() {
     });
   });
 
+  describe('saveBook()', function() {
+    it('should properly save a new book object', function() {
+      var book = {
+        title: 'a',
+        subtitle: 'b',
+        isbn: 'test',
+        author: 'c'
+      };
+
+      var bookSaved = false;
+
+      bookDataService.saveBook(book).then(function(response) {
+        bookSaved = response.data;
+      });
+
+      $rootScope.$apply();
+
+      var savedBook;
+
+      bookDataService.getBookByIsbn(book.isbn).then(function(response) {
+        savedBook = response.data;
+      });
+
+      $rootScope.$apply();
+
+      expect(savedBook).toEqual(book);
+    });
+  });
+
 });
