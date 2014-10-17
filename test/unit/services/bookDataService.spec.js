@@ -1,28 +1,29 @@
 'use strict';
 
 describe('Service: bookDataService', function() {
-  var bookDataService, $rootScope;
+  var bookDataService, $httpBackend;
+
+  var baseUrl = 'http://ajs-workshop.herokuapp.com/api';
 
   beforeEach(module('bookMonkey'));
 
-  beforeEach(module(function($provide) {
-    $provide.factory('dataEnhancer', function() {
-      function enhance(b) {
-        b.test = 'test';
-        return b;
-      }
-
-      return {
-        enhance: enhance
-      }
-    });
-  }));
-
-  beforeEach(inject(function(_$rootScope_, _bookDataService_) {
-    $rootScope = _$rootScope_;
+  beforeEach(inject(function(_$httpBackend_, _bookDataService_) {
+    $httpBackend = _$httpBackend_;
     bookDataService = _bookDataService_;
   }));
 
+  // define trained responses
+  beforeEach(function() {
+    $httpBackend.when('GET', baseUrl + '/books').respond({});
+    $httpBackend.when('POST', baseUrl + '/books').respond({});
+    $httpBackend.when('GET', baseUrl + '/books/978-3-89864-829-5').respond({});
+    $httpBackend.when('DELETE', baseUrl + '/books/978-3-89864-829-5').respond({});
+  });
+
+  afterEach(function() {
+    $httpBackend.verifyNoOutstandingExpectation();
+    $httpBackend.verifyNoOutstandingRequest();
+  });
 
 
   describe('Duck Typing', function() {
@@ -37,48 +38,18 @@ describe('Service: bookDataService', function() {
 
   describe('getBooks()', function() {
     it('should return an array of book objects', function() {
-      var books;
-
-      var promise = bookDataService.getBooks();
-      expect(angular.isFunction(promise.then)).toBe(true);
-
-      promise.then(function(response) {
-        books = response.data;
-      });
-
-      // synchronously resolve the pending promise
-      $rootScope.$apply();
-
-      expect(books).toBeDefined();
-      books.forEach(function(book) {
-        expect(book.title).toBeDefined();
-        expect(book.subtitle).toBeDefined();
-        expect(book.isbn).toBeDefined();
-        expect(book.test).toBeDefined();
-        expect(book.test).toBe('test');
-      });
-    });
-
-    it('should return a copy of the internal data structure', function() {
-      expect(bookDataService.getBooks()).not.toBe(bookDataService.getBooks());
+      $httpBackend.expectGET(baseUrl + '/books');
+      bookDataService.getBooks();
+      $httpBackend.flush();
     });
   });
 
   describe('getBookByIsbn()', function() {
     it('should return the appropriate book object', function() {
       var isbn = '978-3-89864-829-5';
-      var book;
-
-      var promise = bookDataService.getBookByIsbn(isbn);
-      expect(angular.isFunction(promise.then)).toBe(true);
-
-      promise.then(function(response) {
-        book = response.data;
-      });
-
-      $rootScope.$apply();
-
-      expect(book.isbn).toBe(isbn);
+      $httpBackend.expectGET(baseUrl + '/books/' + isbn);
+      bookDataService.getBookByIsbn(isbn);
+      $httpBackend.flush();
     });
   });
 
@@ -91,53 +62,19 @@ describe('Service: bookDataService', function() {
         author: 'c'
       };
 
-      var bookSaved = false;
-
-      bookDataService.saveBook(book).then(function(response) {
-        bookSaved = response.data;
-      });
-
-      $rootScope.$apply();
-
-      var savedBook;
-
-      bookDataService.getBookByIsbn(book.isbn).then(function(response) {
-        savedBook = response.data;
-      });
-
-      $rootScope.$apply();
-
-      expect(savedBook).toEqual(book);
+      $httpBackend.expectPOST(baseUrl + '/books', book);
+      bookDataService.saveBook(book);
+      $httpBackend.flush();
     });
   });
 
   describe('deleteBookByIsbn()', function() {
     it('should properly delete an available book object', function() {
       var isbn = '978-3-89864-829-5';
-      var bookDeleted = false;
-      var book;
 
-      bookDataService.getBookByIsbn(isbn).then(function(response) {
-        book = response.data;
-      });
-      $rootScope.$apply();
-
-      expect(book).toBeDefined();
-
-
-      bookDataService.deleteBookByIsbn(isbn).then(function(response) {
-        bookDeleted = response.data;
-      });
-      $rootScope.$apply();
-
-      expect(bookDeleted).toBe(true);
-
-      bookDataService.getBookByIsbn(isbn).then(function(response) {
-        book = response.data;
-      });
-      $rootScope.$apply();
-
-      expect(book).toBeUndefined();
+      $httpBackend.expectDELETE(baseUrl + '/books/' + isbn);
+      bookDataService.deleteBookByIsbn(isbn);
+      $httpBackend.flush();
     });
   });
 
